@@ -8,7 +8,7 @@ export module Snake {
         id: string;
         dir: Vector;
         body: Vector[];
-        color: number;
+        colors: number[];
     }
 
     export interface IGameState {
@@ -51,7 +51,9 @@ export module Snake {
                         dir,
                         body: eats
                             ? [newHead, h, ...t]
-                            : [newHead, ...R.dropLast(1, [h, ...t])],
+                            : t.length === 0
+                                ? [newHead]
+                                : [newHead, h, ...R.dropLast(1, t)],
                     };
             }
         );

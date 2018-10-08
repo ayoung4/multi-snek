@@ -1,6 +1,6 @@
 import * as connect from 'socket.io-client';
 
-import { MOVE, UPDATE, INTERVAL } from 'Shared/constants';
+import { MOVE, UPDATE } from 'Shared/constants';
 import { render } from './render';
 import { step, setDir } from 'Shared/game/store';
 import { store, update } from './store';

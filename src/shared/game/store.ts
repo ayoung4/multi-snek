@@ -40,6 +40,20 @@ export const removeSnake = (id: string) => ({
     },
 });
 
+const randomColors = () => {
+    const x = _.random(0, 1, true);
+    if (x > 0.66) {
+        const color = _.random(0, 100);
+        return [color, color];
+    } else if (x > 0.33) {
+        const color = _.random(10, 100);
+        return [color, color - 10];
+    } else {
+        const color = _.random(0, 100);
+        return [color, 100 - color];
+    }
+};
+
 export const reducers: ReducerMap = {
     [ActionTypes.SET_DIR]: ({ snakes, ...rest }, { payload }) => ({
         ...rest,
@@ -59,7 +73,7 @@ export const reducers: ReducerMap = {
                 id: payload.id,
                 body: [Vector.random()],
                 dir: [0, 1],
-                color: _.random(0, 100),
+                colors: randomColors(),
             },
         ],
     }),

@@ -2,7 +2,6 @@ import * as redux from 'redux';
 
 import { Snake } from 'Shared/game/snake';
 import { matchReducer } from 'Shared/matchReducer';
-import { reducers } from 'Shared/game/store';
 
 enum ActionTypes {
     UPDATE = 'client/update',

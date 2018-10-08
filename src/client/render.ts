@@ -10,15 +10,22 @@ const DIM = 25;
 
 export const render = (store: redux.Store<Snake.IGameState>) => new p5(function (sketch) {
 
-    const drawTile = (h, s, b) => ([x, y]: Vector) => {
-        sketch.colorMode(sketch.HSB, 100);
-        sketch.fill(h, s, b);
-        sketch.stroke(h, s, b - 20);
-        sketch.rect(x * DIM, y * DIM, DIM, DIM);
-    };
+    const drawTile = R.curry(
+        (h, s, b, [x, y]: Vector) => {
+            sketch.colorMode(sketch.HSB, 100);
+            sketch.fill(h, s, b);
+            sketch.stroke(h, s, b - 20);
+            sketch.rect(x * DIM, y * DIM, DIM, DIM);
+        },
+    );
 
-    const drawSnake = ({ color, body }: Snake.ISnake) =>
-        R.forEach(drawTile(color, 90, 80), body);
+    const drawSnake = ({ colors, body }: Snake.ISnake) =>
+        R.addIndex(R.forEach)((v: Vector, i) =>
+            i === 0 || i === body.length - 1 || i % 2
+                ? drawTile(colors[0], 90, 80, v)
+                : drawTile(colors[1], 90, 80, v),
+            body,
+        );
 
     const drawSnakes = R.forEach(drawSnake);
 
