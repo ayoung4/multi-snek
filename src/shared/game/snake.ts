@@ -8,6 +8,7 @@ export module Snake {
         id: string;
         dir: Vector;
         body: Vector[];
+        color: number;
     }
 
     export interface IGameState {
@@ -15,11 +16,10 @@ export module Snake {
         food: Vector;
     }
 
-    export const randomState: () => IGameState =
-        () => ({
-            snakes: [],
-            food: Vector.random(),
-        });
+    export const emptyState = {
+        snakes: [],
+        food: Vector.random(),
+    };
 
     const collides: (h: Vector, t: Vector[]) => boolean =
         (h, t) => R.reduce(
@@ -35,16 +35,18 @@ export module Snake {
 
     const stepSnake =
         R.curry(
-            (food: Vector, bodies: Vector[], { body: [h, ...t], dir, id }: ISnake) => {
+            (food: Vector, bodies: Vector[], { body: [h, ...t], dir, id, ...rest }: ISnake) => {
                 const newHead = move(dir, h);
                 const eats = Vector.equals(newHead, food);
                 return collides(newHead, bodies)
                     ? {
+                        ...rest,
                         id,
                         dir,
                         body: [Vector.random()],
                     }
                     : {
+                        ...rest,
                         id,
                         dir,
                         body: eats

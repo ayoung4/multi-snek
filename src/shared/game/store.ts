@@ -1,8 +1,10 @@
 import * as redux from 'redux';
 import * as R from 'ramda';
+import * as _ from 'lodash';
 
 import { Vector } from './vector';
 import { Snake } from './snake';
+import { ReducerMap, matchReducer } from '../matchReducer';
 
 enum ActionTypes {
     SET_DIR = 'snake/set-direction',
@@ -38,11 +40,7 @@ export const removeSnake = (id: string) => ({
     },
 });
 
-type ReducerMap = {
-    [key in ActionTypes]: redux.Reducer<Snake.IGameState>;
-};
-
-const reducers: ReducerMap = {
+export const reducers: ReducerMap = {
     [ActionTypes.SET_DIR]: ({ snakes, ...rest }, { payload }) => ({
         ...rest,
         snakes: R.map(
@@ -57,27 +55,20 @@ const reducers: ReducerMap = {
         ...rest,
         snakes: [
             ...snakes,
-            { id: payload.id, body: [Vector.random()], dir: [0, 1] },
+            {
+                id: payload.id,
+                body: [Vector.random()],
+                dir: [0, 1],
+                color: _.random(0, 100),
+            },
         ],
     }),
     [ActionTypes.REMOVE_SNAKE]: ({ snakes, ...rest }, { payload }) => ({
         ...rest,
-        snakes: R.filter(({ id }) => id !== payload.id, snakes),
+        snakes: R.filter(
+            ({ id }) => id !== payload.id,
+            snakes,
+        ),
     }),
     [ActionTypes.STEP]: Snake.step,
 };
-
-type MapReducer = (rm: ReducerMap) => redux.Reducer<Snake.IGameState>
-
-const matchReducer: MapReducer
-    = (rm) =>
-        (state = Snake.randomState(), { type, payload }) =>
-            !!rm[type]
-                ? rm[type](state, { type, payload })
-                : state;
-
-const reducer = matchReducer(reducers);
-
-export const store = redux.createStore(
-    reducer,
-);

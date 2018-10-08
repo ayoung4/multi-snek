@@ -1,7 +1,8 @@
 import * as redux from 'redux';
 
-import { Vector } from 'Shared/game/vector';
 import { Snake } from 'Shared/game/snake';
+import { matchReducer } from 'Shared/matchReducer';
+import { reducers } from 'Shared/game/store';
 
 enum ActionTypes {
     UPDATE = 'client/update',
@@ -12,12 +13,14 @@ export const update = (state: Snake.IGameState) => ({
     payload: state,
 });
 
-const reducer: redux.Reducer<Snake.IGameState> =
-    (state = Snake.randomState(), { type, payload }) =>
+const socketUpdate: redux.Reducer<Snake.IGameState> =
+    (state, { type, payload }) =>
         type === ActionTypes.UPDATE
             ? payload
             : state;
 
 export const store = redux.createStore(
-    reducer,
+    matchReducer({
+        [ActionTypes.UPDATE]: socketUpdate,
+    }),
 );
